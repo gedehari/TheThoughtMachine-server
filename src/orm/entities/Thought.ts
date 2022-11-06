@@ -1,16 +1,16 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('thoughts')
 export class Thought {
-    @PrimaryGeneratedColumn("increment")
+    @PrimaryGeneratedColumn('increment')
     id: number
 
-    @Column("text")
+    @Column({type: 'text', nullable: false})
     author: string
 
-    @Column("text")
+    @Column({type: 'text', nullable: false})
     message: string
 
-    @Column("date")
+    @CreateDateColumn({name: 'created_at'})
     createdAt: Date
 }

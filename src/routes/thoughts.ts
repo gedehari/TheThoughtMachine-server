@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response, Router } from 'express';
+import { StatusCodes } from 'http-status-codes';
 
 import dataSource from '../orm/dataSource';
 import { Thought } from '../orm/entities/Thought';
@@ -18,7 +19,20 @@ route.get('/:id', async (req: Request, res: Response) => {
 });
 
 route.post('/', async (req: Request, res: Response) => {
-    res.send(req.body);
+    const body = req.body as object;
+
+    if (!('author' in body) || !('message' in body)) {
+        res.status(StatusCodes.BAD_REQUEST);
+        res.send("bad request");
+        return;
+    }
+
+    const thought = dataSource.getRepository(Thought).create();
+    thought.author = req.body['author'];
+    thought.message = req.body['message'];
+
+    const results = await dataSource.getRepository(Thought).save(thought);
+    res.json(results);
 });
 
 export default route;
