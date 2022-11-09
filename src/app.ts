@@ -1,6 +1,7 @@
 import express, { Express, NextFunction, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import cors from 'cors'
+import path from 'path';
 
 import dataSource from './orm/dataSource';
 import index from './routes/index'
@@ -18,7 +19,7 @@ const app: Express = express();
 app.use(cors());
 app.use(express.json());
 
-app.use('/', index);
+app.use('/', express.static(path.join(__dirname, '../public')));
 app.use('/thoughts', thoughts);
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
