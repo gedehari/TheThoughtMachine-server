@@ -6,6 +6,9 @@ export class Thought {
     id: number
 
     @Column({type: 'text', nullable: false})
+    title: string
+
+    @Column({type: 'text', nullable: false})
     author: string
 
     @Column({type: 'text', nullable: false})
