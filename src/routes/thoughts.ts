@@ -13,7 +13,20 @@ interface ThoughtRequest {
 const route = Router();
 
 route.get('/', async (req: Request, res: Response) => {
-    const thoughts = await dataSource.getRepository(Thought).find();
+    const limit = parseInt(req.query['limit'] as string) || 10;
+    if (limit <= 0) {
+        res.status(StatusCodes.BAD_REQUEST);
+        res.send("Bad request: invalid limit");
+        return;
+    }
+    const page = parseInt(req.query['page'] as string) || 0;
+
+    const thoughts = await dataSource.getRepository(Thought).find({
+        order: {id: 'DESC'},
+        take: limit,
+        skip: limit * page
+    });
+
     res.json(thoughts);
 });
 
