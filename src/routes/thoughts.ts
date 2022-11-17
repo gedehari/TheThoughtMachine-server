@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response, Router } from 'express';
 import { StatusCodes } from 'http-status-codes';
+import { LessThan, LessThanOrEqual } from 'typeorm';
 
 import dataSource from '../orm/dataSource';
 import { Thought } from '../orm/entities/Thought';
@@ -19,12 +20,18 @@ route.get('/', async (req: Request, res: Response) => {
         res.send("Bad request: invalid limit");
         return;
     }
-    const page = parseInt(req.query['page'] as string) || 0;
+    const from = parseInt(req.query['from'] as string) || 0;
+    if (from < 0) {
+        res.status(StatusCodes.BAD_REQUEST);
+        res.send("Bad request: invalid from");
+        return;
+    }
 
     const thoughts = await dataSource.getRepository(Thought).find({
+        where: from === 0 ? undefined : [{id: LessThanOrEqual(from)}],
         order: {id: 'DESC'},
         take: limit,
-        skip: limit * page
+        cache: true
     });
 
     res.json(thoughts);
